@@ -1,0 +1,161 @@
+for low/mid/high   bands
+##############################3
+cd ~/repos/sustain-lc
+
+CTRL=scenarios/comm_controls_Tsec_dp_steps.csv
+FMU=./LC_Frontier_5Cabinet_4_17_25.fmu
+OUTS=scenarios/mvp_outputs_S2.txt
+
+for BAND in low mid high; do
+  EXOG=scenarios/comm_exog_direct5_step_cb4_${BAND}.csv
+  LOG=outputs/comm_step_cb4_${BAND}_S2.csv
+
+  python3 scripts/frontier5_replica_runner_v4.py \
+    --fmu "$FMU" \
+    --exog_csv "$EXOG" \
+    --power_map_mode direct5 \
+    --dt 15 --start_time 0 --stop_time 7200 \
+    --split_mode fixed --fixed_fracs 0.333333333333,0.333333333333,0.333333333334 \
+    --controls_csv "$CTRL" \
+    --outputs_txt "$OUTS" \
+    --out_csv "$LOG"
+
+  python3 analysis/fit_rom_mvp.py \
+    --log "$LOG" \
+    --exog "$EXOG" \
+    --cb 4 \
+    --warmup_s 300 \
+    --wT 1.0 --wQ 1.0 --wDyn 1.0 \
+    --wEps 10.0 --wPrior 0.01\
+    --out_json "outputs/fit_cb4_step_${BAND}_bias.json"
+done
+
+ls -lh outputs/fit_cb4_step_*.json
+
+################################################################
+
+cd ~/repos/sustain-lc
+
+CTRL=scenarios/comm_controls_Tsec_dp_steps.csv
+FMU=./LC_Frontier_5Cabinet_4_17_25.fmu
+OUTS=scenarios/mvp_outputs_S2.txt
+
+for BAND in low mid high; do
+  EXOG=scenarios/comm_exog_direct5_prbs_cb4_${BAND}.csv
+  LOG=outputs/comm_prbs_cb4_${BAND}_S2.csv
+
+  python3 scripts/frontier5_replica_runner_v4.py \
+    --fmu "$FMU" \
+    --exog_csv "$EXOG" \
+    --power_map_mode direct5 \
+    --dt 15 --start_time 0 --stop_time 7200 \
+    --split_mode fixed --fixed_fracs 0.333333333333,0.333333333333,0.333333333334 \
+    --controls_csv "$CTRL" \
+    --outputs_txt "$OUTS" \
+    --out_csv "$LOG"
+
+  python3 analysis/fit_rom_mvp.py \
+    --log "$LOG" \
+    --exog "$EXOG" \
+    --cb 4 \
+    --warmup_s 300 \
+    --wT 1.0 --wQ 1.0 --wDyn 1.0 \
+    --wEps 10.0 --wPrior 0.01\
+    --out_json "outputs/fit_cb4_prbs_${BAND}_bias.json"
+done
+
+
+###################################################
+#start with mid band first
+cd ~/repos/sustain-lc
+
+CTRL=scenarios/comm_controls_dp_steps.csv
+FMU=./LC_Frontier_5Cabinet_4_17_25.fmu
+OUTS=scenarios/mvp_outputs_S2.txt
+EXOG=scenarios/comm_exog_direct5_step_cb4_mid.csv
+LOG=outputs/comm_dp_only_step_cb4_mid_S2.csv
+
+python3 scripts/frontier5_replica_runner_v4.py \
+  --fmu "$FMU" \
+  --exog_csv "$EXOG" \
+  --power_map_mode direct5 \
+  --dt 15 --start_time 0 --stop_time 7200 \
+  --split_mode fixed --fixed_fracs 0.333333333333,0.333333333333,0.333333333334 \
+  --controls_csv "$CTRL" \
+  --outputs_txt "$OUTS" \
+  --out_csv "$LOG"
+
+python3 analysis/fit_rom_mvp.py \
+  --log "$LOG" \
+  --exog "$EXOG" \
+  --cb 4 \
+  --warmup_s 300 \
+  --wT 1.0 --wQ 1.0 --wDyn 1.0 \
+  --wEps 10.0 --wPrior 0.01
+  
+  
+  
+  
+###########################
+# global fit  ;  concat
+
+cd ~/repos/sustain-lc
+
+python3 analysis/make_comm_concat.py \
+  --cb 4 \
+  --out outputs/comm_concat_cb4_S2_fresh.csv \
+  --per_run_warmup_s 300 \
+  --items \
+    outputs/comm_step_cb4_low_S2.csv,scenarios/comm_exog_direct5_step_cb4_low.csv \
+    outputs/comm_step_cb4_mid_S2.csv,scenarios/comm_exog_direct5_step_cb4_mid.csv \
+    outputs/comm_step_cb4_high_S2.csv,scenarios/comm_exog_direct5_step_cb4_high.csv \
+    outputs/comm_prbs_cb4_low_S2.csv,scenarios/comm_exog_direct5_prbs_cb4_low.csv \
+    outputs/comm_prbs_cb4_mid_S2.csv,scenarios/comm_exog_direct5_prbs_cb4_mid.csv \
+    outputs/comm_prbs_cb4_high_S2.csv,scenarios/comm_exog_direct5_prbs_cb4_high.csv
+
+# quick sanity
+python3 - <<'PY'
+import pandas as pd
+df=pd.read_csv("outputs/comm_concat_cb4_S2_fresh.csv")
+print("rows:",len(df),"runs:",df["run_id"].nunique(),"time min/max:",df["time"].min(),df["time"].max())
+print("Pit_exog_W p10/50/90:",df["Pit_exog_W"].quantile([0.1,0.5,0.9]).to_dict())
+PY
+
+
+python3 analysis/fit_rom_mvp.py \
+  --log outputs/comm_concat_cb4_S2_fresh.csv \
+  --exog scenarios/comm_exog_direct5_step_cb4_mid.csv \
+  --cb 4 --warmup_s 0 \   
+  --wT 1.0 --wQ 1.0 --wDyn 1.0 --wEps 10.0 --wPrior 0.01\
+  --bT_max 1.5 --sig_bT 0.5\
+  --out_json outputs/fit_cb4_concat_S2_bias.json
+
+
+
+
+##########################################
+#held out test 
+
+for BAND in low mid high; do
+  python3 analysis/eval_rom_holdout.py \
+    --fit_json outputs/fit_cb4_step_${BAND}_bias.json \
+    --log outputs/comm_prbs_cb4_${BAND}_S2.csv \
+    --exog scenarios/comm_exog_direct5_prbs_cb4_${BAND}.csv \
+    --cb 4 --warmup_s 300\
+done
+
+
+
+cd ~/repos/sustain-lc
+
+for BAND in low mid high; do
+  python3 analysis/eval_rom_holdout.py \
+    --fit_json outputs/fit_cb4_concat_S2_bias.json \
+    --log outputs/comm_prbs_cb4_${BAND}_S2.csv \
+    --exog scenarios/comm_exog_direct5_prbs_cb4_${BAND}.csv \
+    --cb 4 --warmup_s 300\
+done
+
+
+
+
