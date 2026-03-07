@@ -1,0 +1,16 @@
+name: sustain-lc
+channels:
+  - conda-forge
+  - pytorch
+dependencies:
+  - python=3.10
+  - pytorch
+  - pytorch-cuda=11.8
+  - matplotlib
+  - tensorboard
+  - conda-forge::gymnasium
+  - conda-forge::pyfmi
+  - tqdm
+  - conda-forge::casadi
+  - anaconda::scikit-learn
+  - dnachun::torchviz
