@@ -1,0 +1,49 @@
+{
+  "meta": {
+    "created_utc": "2026-03-07T10:00:56.188772Z",
+    "script": "analysis/fit_rom_mvp.py",
+    "log_csv": "outputs/comm_prbs_cb4_mid_S2.csv",
+    "exog_csv": "scenarios/comm_exog_direct5_prbs_cb4_mid.csv",
+    "cb": 4,
+    "warmup_s": 300.0,
+    "dt_s": 15.0,
+    "cp_J_per_kgK": 4180.0,
+    "pit_source": "power[4] (EXOG)",
+    "weights": {
+      "wT": 1.0,
+      "wQ": 1.0,
+      "wDyn": 1.0,
+      "wEps": 10.0,
+      "wPrior": 0.01
+    },
+    "bias": {
+      "bT_max_K": 3.0,
+      "sig_bT_K": 0.5
+    }
+  },
+  "fit": {
+    "UA0_W_per_K": 188393.94312796876,
+    "alpha": -0.33435992138653264,
+    "Cmin_ref_W_per_K": 41438.96292877916,
+    "eta_p": 2.357417509467593,
+    "tau_q_s": 27.143312534407748,
+    "C_th_J_per_K": 6182359.157361874,
+    "biases_K": {
+      "b_a1": 0.5934444939435507,
+      "b_b1": -0.867961317750378,
+      "b_a2": 0.2794736553544086
+    },
+    "K_eff_Pa_per_kg2_s2": 237.9042692612392,
+    "eps_median": 0.8895774576204873,
+    "UA_t_median": 188393.94312796876,
+    "UA_t_min": 188012.67720551504,
+    "UA_t_max": 194126.36564213096
+  },
+  "fit_quality": {
+    "rmse_Ts_K": 0.6088680071239455,
+    "rmse_Q_kW": 7.193701991398824,
+    "optimizer_success": true,
+    "optimizer_status": 0,
+    "optimizer_message": "CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH"
+  }
+}
