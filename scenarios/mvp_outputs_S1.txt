@@ -1,0 +1,69 @@
+# ============================
+# MVP Outputs — Sensor Suite S1 (HX-telemetry)
+# S1: Ts, Tr, m_sec, Tpin
+# Ts   = secondary cold OUT of HX  (HX sensor b1)
+# Tr   = secondary hot  IN  to HX  (HX sensor a1)
+# Tpin = primary   cold  IN  to HX (HX sensor a2)
+# m_sec = secondary-side mass flow through HX (HEX.port_a1.m_flow)
+# Units: T [K], m_flow [kg/s]
+# ============================
+
+# ---- ComputeBlock 1 ----
+simulator[1].datacenter[1].computeBlock[1].cdu[1].HEX.CDU_HEX.sensor_T_b1.T
+simulator[1].datacenter[1].computeBlock[1].cdu[1].HEX.CDU_HEX.sensor_T_b2.T
+simulator[1].datacenter[1].computeBlock[1].cdu[1].HEX.CDU_HEX.sensor_T_a1.T
+simulator[1].datacenter[1].computeBlock[1].cdu[1].HEX.CDU_HEX.sensor_T_a2.T
+simulator[1].datacenter[1].computeBlock[1].cdu[1].HEX.port_a1.m_flow
+
+# ---- ComputeBlock 2 ----
+simulator[1].datacenter[1].computeBlock[2].cdu[1].HEX.CDU_HEX.sensor_T_b1.T
+simulator[1].datacenter[1].computeBlock[2].cdu[1].HEX.CDU_HEX.sensor_T_b2.T
+simulator[1].datacenter[1].computeBlock[2].cdu[1].HEX.CDU_HEX.sensor_T_a1.T
+simulator[1].datacenter[1].computeBlock[2].cdu[1].HEX.CDU_HEX.sensor_T_a2.T
+simulator[1].datacenter[1].computeBlock[2].cdu[1].HEX.port_a1.m_flow
+
+# ---- ComputeBlock 3 ----
+simulator[1].datacenter[1].computeBlock[3].cdu[1].HEX.CDU_HEX.sensor_T_b1.T
+simulator[1].datacenter[1].computeBlock[3].cdu[1].HEX.CDU_HEX.sensor_T_b1.T
+simulator[1].datacenter[1].computeBlock[3].cdu[1].HEX.CDU_HEX.sensor_T_a1.T
+simulator[1].datacenter[1].computeBlock[3].cdu[1].HEX.CDU_HEX.sensor_T_a2.T
+simulator[1].datacenter[1].computeBlock[3].cdu[1].HEX.port_a1.m_flow
+
+# ---- ComputeBlock 4 ----
+simulator[1].datacenter[1].computeBlock[4].cdu[1].HEX.CDU_HEX.sensor_T_b1.T
+simulator[1].datacenter[1].computeBlock[4].cdu[1].HEX.CDU_HEX.sensor_T_b2.T
+simulator[1].datacenter[1].computeBlock[4].cdu[1].HEX.CDU_HEX.sensor_T_a1.T
+simulator[1].datacenter[1].computeBlock[4].cdu[1].HEX.CDU_HEX.sensor_T_a2.T
+simulator[1].datacenter[1].computeBlock[4].cdu[1].HEX.port_a1.m_flow
+
+# ---- ComputeBlock 5 ----
+simulator[1].datacenter[1].computeBlock[5].cdu[1].HEX.CDU_HEX.sensor_T_b1.T
+simulator[1].datacenter[1].computeBlock[5].cdu[1].HEX.CDU_HEX.sensor_T_b2.T
+simulator[1].datacenter[1].computeBlock[5].cdu[1].HEX.CDU_HEX.sensor_T_a1.T
+simulator[1].datacenter[1].computeBlock[5].cdu[1].HEX.CDU_HEX.sensor_T_a2.T
+simulator[1].datacenter[1].computeBlock[5].cdu[1].HEX.port_a1.m_flow
+
+
+# ============================
+# MVP add-ons: heat + HX checks (CB4) + primary loop + dp
+# ============================
+
+# --- cabinet branch heat into coolant (3 branches) ---
+simulator[1].datacenter[1].computeBlock[4].cabinet[1].coolingChannels_1.heatPort.Q_flow
+simulator[1].datacenter[1].computeBlock[4].cabinet[1].coolingChannels_2.heatPort.Q_flow
+simulator[1].datacenter[1].computeBlock[4].cabinet[1].coolingChannels_3.heatPort.Q_flow
+
+# --- HX heat transfer (signed) ---
+simulator[1].datacenter[1].computeBlock[4].cdu[1].HEX.CDU_HEX.Q_flow
+
+
+# --- HX sensor-associated port flows (match sensor_T_* temps) ---
+simulator[1].datacenter[1].computeBlock[4].cdu[1].HEX.CDU_HEX.sensor_T_a1.port_a.m_flow
+simulator[1].datacenter[1].computeBlock[4].cdu[1].HEX.CDU_HEX.sensor_T_a1.port_b.m_flow
+simulator[1].datacenter[1].computeBlock[4].cdu[1].HEX.CDU_HEX.sensor_T_b1.port_a.m_flow
+simulator[1].datacenter[1].computeBlock[4].cdu[1].HEX.CDU_HEX.sensor_T_b1.port_b.m_flow
+
+simulator[1].datacenter[1].computeBlock[4].cdu[1].HEX.CDU_HEX.sensor_T_a2.port_a.m_flow
+simulator[1].datacenter[1].computeBlock[4].cdu[1].HEX.CDU_HEX.sensor_T_a2.port_b.m_flow
+simulator[1].datacenter[1].computeBlock[4].cdu[1].HEX.CDU_HEX.sensor_T_b2.port_a.m_flow
+simulator[1].datacenter[1].computeBlock[4].cdu[1].HEX.CDU_HEX.sensor_T_b2.port_b.m_flow

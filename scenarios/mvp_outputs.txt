@@ -1,0 +1,5 @@
+# --- MVP telemetry outputs (minimum set for ROM) ---
+simulator[1].datacenter[1].computeBlock[4].cdu[1].CabSup_pT.T
+simulator[1].datacenter[1].computeBlock[4].cdu[1].CabRet_pT.T
+simulator[1].datacenter[1].computeBlock[4].cdu[1].valveCDU.m_flow
+simulator[1].datacenter[1].computeBlock[4].cdu[1].CDUP.dp
