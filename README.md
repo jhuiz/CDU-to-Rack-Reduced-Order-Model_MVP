@@ -14,7 +14,7 @@ Goal: show that a constrained ROM can be fit from commissioning-style excitation
     - `outputs/fit_cb4_step_mid_bias.json`
     - `outputs/fit_cb4_step_high_bias.json`
  
-  **FMU not included due to redistribution policy. Obtain Frontier FMU from the official Sustain-LC/ExaDigiT source and place at ./LC_Frontier_5Cabinet_4_17_25.fmu**
+**FMU not included due to redistribution policy. Obtain Frontier FMU from the official Sustain-LC/ExaDigiT source and place at ./LC_Frontier_5Cabinet_4_17_25.fmu**
 
 ## Model summary (what is being fit)
 States:
